@@ -29,8 +29,9 @@ migrate = Migrate(app, db)
 
 @app.route('/')
 def home():
-    tuition_requirements = TuitionRequirement.query.order_by(TuitionRequirement.created_at.desc()).all()
-    return render_template('home.html', tuition_requirements=tuition_requirements)
+    return 'Tuition App Running'
+    #tuition_requirements = TuitionRequirement.query.order_by(TuitionRequirement.created_at.desc()).all()
+    #return render_template('home.html', tuition_requirements=tuition_requirements)
 
 
 @app.route('/student/register', methods=['GET', 'POST'])
