@@ -1,4 +1,10 @@
-Flask
-Flask-SQLAlchemy
-psycopg2-binary
-Flask-WTF
+Flask==3.1.2
+Flask-SQLAlchemy==3.1.1
+psycopg2-binary==2.9.10
+Flask-WTF==1.2.2
+Flask-Migrate==4.1.0
+gunicorn
+python-dotenv
+email-validator
+WTForms
+requests
