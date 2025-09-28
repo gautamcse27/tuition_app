@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container my-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="display-4 text-primary mb-0">Tutor Dashboard</h2>
+    <a href="{{ url_for('tutor_logout') }}" class="btn btn-outline-danger btn-lg">Logout</a>
+  </div>
+
+  <!-- Profile Card -->
+  <div class="card shadow-sm mb-4 border-info">
+    <div class="card-header bg-info text-white d-flex align-items-center">
+      <i class="fas fa-user-circle fa-2x mr-3" aria-hidden="true"></i>
+      <h4 class="mb-0">Profile Information</h4>
+    </div>
+    <div class="card-body">
+      <ul class="list-group list-group-flush" role="list">
+        <li class="list-group-item"><strong>Name:</strong> {{ tutor.name }}</li>
+        <li class="list-group-item"><strong>Email:</strong> {{ tutor.email }}</li>
+        <li class="list-group-item"><strong>Mobile No:</strong> {{ tutor.phone }}</li>
+        <li class="list-group-item"><strong>Subjects Taught:</strong> {{ form.subjects.data }}</li>
+        <li class="list-group-item"><strong>Mode of Teaching:</strong> {{ form.mode.data|capitalize }}</li>
+        <li class="list-group-item"><strong>Skill Level:</strong> {{ form.skill.data|capitalize }}</li>
+        <li class="list-group-item"><strong>Teaching Methodology:</strong> {{ form.methodology.data }}</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Update Profile Form Card -->
+  <div class="card shadow-sm border-primary">
+    <div class="card-header bg-primary text-white d-flex align-items-center">
+      <i class="fas fa-edit fa-2x mr-3" aria-hidden="true"></i>
+      <h4 class="mb-0">Update Profile</h4>
+    </div>
+    <div class="card-body">
+      <form method="POST" novalidate>
+        {{ form.hidden_tag() }}
+
+        <div class="form-group">
+          <label for="subjects" class="font-weight-bold">Subjects Taught</label>
+          <input type="text" aria-describedby="subjectsHelp" id="subjects" name="subjects" class="form-control form-control-lg"
+                 placeholder="E.g. Math, Physics, English"
+                 value="{{ form.subjects.data if form.subjects.data else '' }}">
+          <small id="subjectsHelp" class="form-text text-muted mt-1">
+            Enter subjects separated by commas (no checkboxes needed).
+          </small>
+        </div>
+
+        <div class="form-group">
+          {{ form.mode.label(class="font-weight-bold") }}
+          {{ form.mode(class="form-control form-control-lg") }}
+        </div>
+
+        <div class="form-group">
+          {{ form.skill.label(class="font-weight-bold") }}
+          {{ form.skill(class="form-control form-control-lg") }}
+        </div>
+
+        <div class="form-group">
+          {{ form.methodology.label(class="font-weight-bold") }}
+          {{ form.methodology(class="form-control form-control-lg", rows="5", placeholder="Describe your teaching methodology (100-200 words)") }}
+          <small class="form-text text-muted">
+            Share your teaching approach and methodology.
+          </small>
+        </div>
+
+        {{ form.submit(class="btn btn-primary btn-lg btn-block") }}
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

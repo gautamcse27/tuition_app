@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Student Dashboard</h2>
+    <div>
+        <h4>Profile</h4>
+        <ul>
+            <li><strong>Name:</strong> {{ student.name }}</li>
+            <li><strong>Email:</strong> {{ student.email }}</li>
+            <li><strong>Mobile No:</strong> {{ student.phone }}</li>
+        </ul>
+    </div>
+    <div>
+        <h4>Post Tuition Requirement</h4>
+        <form method="POST" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.subject.label }} {{ form.subject(class="form-control") }}
+            </div>
+            <div class="form-group">
+                {{ form.student_class.label }} {{ form.student_class(class="form-control") }}
+            </div>
+            <div class="form-group">
+                {{ form.mode.label }} {{ form.mode(class="form-control") }}
+            </div>
+            <div class="form-group">
+                {{ form.address.label }} {{ form.address(class="form-control") }}
+                <small>Only for offline mode.</small>
+            </div>
+            <div class="form-group">
+                {{ form.description.label }} {{ form.description(class="form-control", rows="3") }}
+            </div>
+            <div class="form-group">
+                {{ form.pdf.label }} {{ form.pdf(class="form-control-file") }}
+                <small>Only PDF files, max 5MB.</small>
+            </div>
+            {{ form.submit(class="btn btn-primary") }}
+        </form>
+    </div>
+    <div>
+        <h4>Your Tuition Requirements</h4>
+        {% if requirements %}
+            <table class="table">
+                <tr>
+                    <th>Subject</th>
+                    <th>Class</th>
+                    <th>Mode</th>
+                    <th>Address</th>
+                    <th>Description</th>
+                    <th>PDF</th>
+                    <th>Posted On</th>
+                    <th>Actions</th>
+                </tr>
+                {% for req in requirements %}
+                <tr>
+                    <td>{{ req.subject }}</td>
+                    <td>{{ req.student_class }}</td>
+                    <td>{{ req.mode }}</td>
+                    <td>{{ req.address or '' }}</td>
+                    <td>{{ req.description or '' }}</td>
+                    <td>
+                        {% if req.pdf_data %}
+                        <a href="{{ url_for('requirement_pdf', req_id=req.id) }}" target="_blank">View PDF</a>
+                        {% else %}
+                        No File
+                        {% endif %}
+                    </td>
+                    <td>{{ req.created_at.strftime('%Y-%m-%d %H:%M') if req.created_at else '' }}</td>
+                    <td>
+                        <form method="POST" action="{{ url_for('close_requirement', req_id=req.id) }}" onsubmit="return confirm('Are you sure you want to close this requirement?');">
+                            <button type="submit" class="btn btn-danger btn-sm">Close</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <div>No tuition requirements posted yet.</div>
+        {% endif %}
+    </div>
+    <a href="{{ url_for('student_logout') }}" class="btn btn-danger mt-3">Logout</a>
+</div>
+{% endblock %}
