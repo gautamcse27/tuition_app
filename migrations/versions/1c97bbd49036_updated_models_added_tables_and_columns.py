@@ -26,8 +26,8 @@ def upgrade():
                existing_type=sa.VARCHAR(length=20),
                nullable=False)
         batch_op.alter_column('password_hash',
-               existing_type=sa.VARCHAR(length=255),
-               type_=sa.String(length=128),
+               existing_type=sa.VARCHAR(length=128),
+               type_=sa.String(length=255),
                existing_nullable=False)
         batch_op.drop_column('created_at')
 
@@ -54,8 +54,8 @@ def upgrade():
                existing_type=sa.VARCHAR(length=20),
                nullable=False)
         batch_op.alter_column('password_hash',
-               existing_type=sa.VARCHAR(length=255),
-               type_=sa.String(length=128),
+               existing_type=sa.VARCHAR(length=128),
+               type_=sa.String(length=255),
                existing_nullable=False)
         batch_op.drop_column('created_at')
 
@@ -67,8 +67,8 @@ def downgrade():
     with op.batch_alter_table('tutor_registration', schema=None) as batch_op:
         batch_op.add_column(sa.Column('created_at', postgresql.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP'), autoincrement=False, nullable=True))
         batch_op.alter_column('password_hash',
-               existing_type=sa.String(length=128),
-               type_=sa.VARCHAR(length=255),
+               existing_type=sa.String(length=255),
+               type_=sa.VARCHAR(length=128),
                existing_nullable=False)
         batch_op.alter_column('mobile_no',
                existing_type=sa.VARCHAR(length=20),
@@ -95,8 +95,8 @@ def downgrade():
     with op.batch_alter_table('student_registration', schema=None) as batch_op:
         batch_op.add_column(sa.Column('created_at', postgresql.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP'), autoincrement=False, nullable=True))
         batch_op.alter_column('password_hash',
-               existing_type=sa.String(length=128),
-               type_=sa.VARCHAR(length=255),
+               existing_type=sa.String(length=255),
+               type_=sa.VARCHAR(length=128),
                existing_nullable=False)
         batch_op.alter_column('mobile_no',
                existing_type=sa.VARCHAR(length=20),
