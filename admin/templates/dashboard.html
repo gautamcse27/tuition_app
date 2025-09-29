@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <h2>Admin Dashboard</h2>
+  <h3>Students</h3>
+  <table class="table table-bordered">
+    <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th></tr></thead>
+    <tbody>
+      {% for student in students %}
+      <tr>
+        <td>{{ student.id }}</td>
+        <td>{{ student.name }}</td>
+        <td>{{ student.email }}</td>
+        <td>{{ student.phone }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="4">No students found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h3>Tutors</h3>
+  <table class="table table-bordered">
+    <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th></tr></thead>
+    <tbody>
+      {% for tutor in tutors %}
+      <tr>
+        <td>{{ tutor.id }}</td>
+        <td>{{ tutor.name }}</td>
+        <td>{{ tutor.email }}</td>
+        <td>{{ tutor.phone }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="4">No tutors found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h3>Tuition Requirements</h3>
+  <table class="table table-bordered">
+    <thead><tr><th>ID</th><th>Student ID</th><th>Subject</th><th>Class</th><th>Mode</th><th>Address</th></tr></thead>
+    <tbody>
+      {% for req in requirements %}
+      <tr>
+        <td>{{ req.id }}</td>
+        <td>{{ req.student_id }}</td>
+        <td>{{ req.subject }}</td>
+        <td>{{ req.student_class }}</td>
+        <td>{{ req.mode }}</td>
+        <td>{{ req.address }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="6">No requirements found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

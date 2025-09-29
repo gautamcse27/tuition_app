@@ -9,13 +9,15 @@ from forms import (
     TuitionRequirementForm,
     TutorProfileForm,
 )
+from admin import admin_bp
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
 from cryptography.fernet import Fernet
-
 app = Flask(__name__)
-app.config.from_pyfile('config.py')
 
+
+app.config.from_pyfile('config.py')
+app.register_blueprint(admin_bp)
 # Use a secure 32-byte base64 encoded key, saved securely in environment/config
 secret_key = b'QJ3v7gmvuN_azg7BALhL6O_AdcFeTsFdlnlSaYP7Z7w='  # replace with your own key
 
