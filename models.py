@@ -8,8 +8,7 @@ class Admin(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(128), nullable=False)
-
+    password_hash = db.Column(db.String(256), nullable=False)  # Increased from 128 to 256
 
 class Student(db.Model):
     __tablename__ = 'student_registration'
@@ -18,14 +17,13 @@ class Student(db.Model):
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     phone = db.Column('mobile_no', db.String(20), unique=True, nullable=False)
-    password_hash = db.Column(db.String(128), nullable=False)
+    password_hash = db.Column(db.String(256), nullable=False)  # Increased from 128 to 256
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
-
 
 class Tutor(db.Model):
     __tablename__ = 'tutor_registration'
@@ -34,14 +32,13 @@ class Tutor(db.Model):
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     phone = db.Column('mobile_no', db.String(20), unique=True, nullable=False)
-    password_hash = db.Column(db.String(128), nullable=False)
+    password_hash = db.Column(db.String(256), nullable=False)  # Increased from 128 to 256
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
-
 
 class TuitionRequirement(db.Model):
     __tablename__ = 'tuition_requirement'
@@ -53,11 +50,10 @@ class TuitionRequirement(db.Model):
     mode = db.Column(db.String(20), nullable=False)
     address = db.Column(db.String(255))
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
-    description = db.Column(db.String(300))  # For 3-4 sentence details
-    pdf_data = db.Column(LargeBinary)        # Encrypted binary file data stored in DB
+    description = db.Column(db.String(300))
+    pdf_data = db.Column(LargeBinary)
 
     student = db.relationship('Student', backref=db.backref('requirements', lazy=True))
-
 
 class TutorProfile(db.Model):
     __tablename__ = 'tutor_profile'
