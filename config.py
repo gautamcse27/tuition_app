@@ -1,7 +1,7 @@
 import os
 
 # Use the name of the environment variable, not the actual URL string
-uri = os.getenv('DATABASE_URL')
+uri = os.getenv('DATABASE_URL', 'postgresql://tuition25:Dtuition@localhost:5432/tuitiondb')
 
 # Fix for Heroku 'postgres://' prefix
 if uri and uri.startswith('postgres://'):

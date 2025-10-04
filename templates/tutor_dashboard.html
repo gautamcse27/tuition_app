@@ -4,7 +4,7 @@
 <div class="container my-5">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="display-4 text-primary mb-0">Tutor Dashboard</h2>
-    <a href="{{ url_for('tutor_logout') }}" class="btn btn-outline-danger btn-lg">Logout</a>
+    <a href="{{ url_for('tutor.logout') }}" class="btn btn-outline-danger btn-lg">Logout</a>
   </div>
 
   <!-- Profile Card -->
@@ -37,13 +37,8 @@
         {{ form.hidden_tag() }}
 
         <div class="form-group">
-          <label for="subjects" class="font-weight-bold">Subjects Taught</label>
-          <input type="text" aria-describedby="subjectsHelp" id="subjects" name="subjects" class="form-control form-control-lg"
-                 placeholder="E.g. Math, Physics, English"
-                 value="{{ form.subjects.data if form.subjects.data else '' }}">
-          <small id="subjectsHelp" class="form-text text-muted mt-1">
-            Enter subjects separated by commas (no checkboxes needed).
-          </small>
+          {{ form.subjects.label(class="font-weight-bold") }}
+          {{ form.subjects(class="form-control form-control-lg", placeholder="E.g. Math, Physics, English") }}
         </div>
 
         <div class="form-group">
@@ -66,6 +61,39 @@
 
         {{ form.submit(class="btn btn-primary btn-lg btn-block") }}
       </form>
+    </div>
+  </div>
+
+  <!-- Tuition Requirement Payment Receipts -->
+  <div class="card shadow-sm border-secondary">
+    <div class="card-header bg-secondary text-white">
+      <h4 class="mb-0">Tuition Requirements</h4>
+    </div>
+    <div class="card-body">
+      {% for requirement in requirements %}
+        <div class="mb-3 p-3 border rounded">
+          <h5>Subject: {{ requirement.subject }}</h5>
+          <p>Class: {{ requirement.student_class }}</p>
+          <p>Mode: {{ requirement.mode }}</p>
+          <p>Description: {{ requirement.description }}</p>
+
+          {% if requirement.payment_verified %}
+            <p class="text-success font-weight-bold">Payment Verified</p>
+          {% elif requirement.receipt_data %}
+            <p class="text-warning font-weight-bold">Receipt Uploaded - Waiting for verification</p>
+          {% else %}
+            <form action="{{ url_for('tutor.upload_receipt', req_id=requirement.id) }}" method="POST" enctype="multipart/form-data">
+              <div class="form-group">
+                <label for="receipt_{{ requirement.id }}">Upload Payment Receipt</label>
+                <input type="file" class="form-control-file" id="receipt_{{ requirement.id }}" name="receipt" required>
+              </div>
+              <button type="submit" class="btn btn-primary btn-sm">Upload Receipt</button>
+            </form>
+          {% endif %}
+        </div>
+      {% else %}
+        <p>No tuition requirements assigned.</p>
+      {% endfor %}
     </div>
   </div>
 </div>

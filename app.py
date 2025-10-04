@@ -1,6 +1,8 @@
 import os
 from flask import Flask, render_template, redirect, url_for, request, flash, session, abort, Response
-from models import db, Student, Tutor, TuitionRequirement, TutorProfile
+from flask_login import LoginManager, login_user, logout_user, current_user, login_required
+
+from models import db, Student, Tutor, TuitionRequirement, TutorProfile, Admin
 from forms import (
     StudentRegisterForm,
     TutorRegisterForm,
@@ -9,25 +11,41 @@ from forms import (
     TuitionRequirementForm,
     TutorProfileForm,
 )
+from flask_login import current_user
 from admin import admin_bp
+from tutor import tutor_bp
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
 from cryptography.fernet import Fernet
+
 app = Flask(__name__)
 
-
 app.config.from_pyfile('config.py')
-app.register_blueprint(admin_bp)
-# Use a secure 32-byte base64 encoded key, saved securely in environment/config
-secret_key = b'QJ3v7gmvuN_azg7BALhL6O_AdcFeTsFdlnlSaYP7Z7w='  # replace with your own key
 
+# Initialize Flask-Login
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'tutor.login'
+@login_manager.user_loader
+def load_user(user_id):
+    # Attempt to load Tutor user
+    tutor = Tutor.query.get(int(user_id))
+    if tutor:
+        return tutor
+    # Optionally, fallback to Admin load (if needed)
+    return Admin.query.get(int(user_id))
+
+# Register the admin blueprint
+app.register_blueprint(admin_bp)
+app.register_blueprint(tutor_bp)
+# Your encryption setup
+secret_key = b'QJ3v7gmvuN_azg7BALhL6O_AdcFeTsFdlnlSaYP7Z7w='  # replace with your own key
 fernet = Fernet(secret_key)
 
+# Initialize database and migration
 db.init_app(app)
 migrate = Migrate(app, db)
 
-#with app.app_context():
- #   db.create_all()
 
 @app.route('/')
 def home():
@@ -52,21 +70,6 @@ def student_register():
     return render_template('student_register.html', form=form)
 
 
-@app.route('/tutor/register', methods=['GET', 'POST'])
-def tutor_register():
-    form = TutorRegisterForm()
-    if form.validate_on_submit():
-        tutor = Tutor(
-            name=form.name.data,
-            email=form.email.data,
-            phone=form.phone.data
-        )
-        tutor.password_hash = generate_password_hash(form.password.data)
-        db.session.add(tutor)
-        db.session.commit()
-        flash("Tutor registered successfully! Please login.", "success")
-        return redirect(url_for('tutor_login'))
-    return render_template('tutor_register.html', form=form)
 
 
 @app.route('/student/login', methods=['GET', 'POST'])
@@ -85,24 +88,6 @@ def student_login():
         else:
             flash("Invalid email/phone or password.", "danger")
     return render_template('student_login.html', form=form)
-
-
-@app.route('/tutor/login', methods=['GET', 'POST'])
-def tutor_login():
-    form = TutorLoginForm()
-    if form.validate_on_submit():
-        user = None
-        if form.email.data:
-            user = Tutor.query.filter_by(email=form.email.data).first()
-        elif form.phone.data:
-            user = Tutor.query.filter_by(phone=form.phone.data).first()
-        if user and check_password_hash(user.password_hash, form.password.data):
-            session['tutor_id'] = user.id
-            flash("Logged in successfully.", "success")
-            return redirect(url_for('tutor_dashboard'))
-        else:
-            flash("Invalid email/phone or password.", "danger")
-    return render_template('tutor_login.html', form=form)
 
 
 @app.route('/student/dashboard', methods=['GET', 'POST'])
@@ -149,38 +134,6 @@ def requirement_pdf(req_id):
     return Response(decrypted_pdf, mimetype='application/pdf')
 
 
-@app.route('/tutor/dashboard', methods=['GET', 'POST'])
-def tutor_dashboard():
-    if 'tutor_id' not in session:
-        flash("Please login first.", "warning")
-        return redirect(url_for('tutor_login'))
-    tutor_id = session.get('tutor_id')
-    tutor = Tutor.query.get_or_404(tutor_id)
-
-    form = TutorProfileForm()
-    profile = TutorProfile.query.filter_by(tutor_id=tutor.id).first()
-
-    if request.method == 'GET' and profile:
-        form.subjects.data = ', '.join(profile.subjects) if profile.subjects else ''
-        form.mode.data = profile.mode
-        form.skill.data = profile.skill
-        form.methodology.data = profile.methodology
-
-    if form.validate_on_submit():
-        if not profile:
-            profile = TutorProfile(tutor_id=tutor.id)
-        profile.subjects = [s.strip() for s in form.subjects.data.split(',')] if form.subjects.data else []
-        profile.mode = form.mode.data
-        profile.skill = form.skill.data
-        profile.methodology = form.methodology.data
-        db.session.add(profile)
-        db.session.commit()
-        flash('Profile updated successfully.', 'success')
-        return redirect(url_for('tutor_dashboard'))
-
-    return render_template('tutor_dashboard.html', tutor=tutor, form=form)
-
-
 @app.route('/student/logout')
 def student_logout():
     session.pop('student_id', None)
@@ -188,11 +141,6 @@ def student_logout():
     return redirect(url_for('student_login'))
 
 
-@app.route('/tutor/logout')
-def tutor_logout():
-    session.pop('tutor_id', None)
-    flash("You have been logged out.", "info")
-    return redirect(url_for('tutor_login'))
 
 
 @app.route('/requirements')
@@ -223,16 +171,21 @@ def close_requirement(req_id):
 
 
 @app.route('/payment/<int:req_id>')
+@login_required
 def payment(req_id):
-    if 'tutor_id' not in session:
-        flash("Please login as tutor to make payment.", "warning")
-        return redirect(url_for('tutor_login'))
-
+    # current_user should already be authenticated due to @login_required    
+    # Retrieve the tutoring requirement or return 404 if not found
     requirement = TuitionRequirement.query.get_or_404(req_id)
+
+    # Optional: Check if the current user is authorized to make payment for this requirement
+    # For example, check if current_user is the assigned tutor or add your business logic here
+   # if hasattr(current_user, 'id') and requirement.tutor_id != current_user.id:
+    #    flash("You are not authorized to access this payment page.", "danger")
+     #   return redirect(url_for('tutor.dashboard'))
+
     student = requirement.student
-
+    
     return render_template('payment.html', req_id=req_id, student=student, requirement=requirement)
-
 
 if __name__ == '__main__':
     app.run(debug=True)

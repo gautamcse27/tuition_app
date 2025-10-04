@@ -30,7 +30,7 @@
           {% if session.get('tutor_id') %}
           <a href="{{ url_for('payment', req_id=req.id) }}" class="btn btn-light mt-3">Contact Student</a>
           {% else %}
-          <a href="{{ url_for('tutor_login') }}" class="btn btn-light mt-3">Contact Student</a>
+          <a href="{{ url_for('tutor.login') }}" class="btn btn-light mt-3">Contact Student</a>
           {% endif %}
         </div>
       </div>

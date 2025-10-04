@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Student Details{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <h2>Student Details</h2>
+  <table class="table table-bordered">
+    <tr>
+      <th>Name</th>
+      <td>{{ student.name }}</td>
+    </tr>
+    <tr>
+      <th>Email</th>
+      <td>{{ student.email }}</td>
+    </tr>
+    <tr>
+      <th>Phone</th>
+      <td>{{ student.phone }}</td>
+    </tr>
+    <tr>
+      <th>Address</th>
+      <td>{{ student.address if student.address else 'N/A' }}</td>
+    </tr>
+    <tr>
+      <th>Status</th>
+      <td>
+        {% if student.active %}
+          <span class="badge badge-success">Active</span>
+        {% else %}
+          <span class="badge badge-secondary">Disabled</span>
+        {% endif %}
+      </td>
+    </tr>
+  </table>
+
+  <a href="{{ url_for('admin.dashboard') }}" class="btn btn-primary mt-3">Back to Dashboard</a>
+</div>
+{% endblock %}

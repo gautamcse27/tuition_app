@@ -21,12 +21,12 @@
     <div class="col-md-6 mb-3">
       <h3>Register</h3>
       <a href="{{ url_for('student_register') }}" class="btn btn-primary mb-2">Student Registration</a><br>
-      <a href="{{ url_for('tutor_register') }}" class="btn btn-secondary">Tutor Registration</a>
+      <a href="{{ url_for('tutor.register') }}" class="btn btn-secondary">Tutor Registration</a>
     </div>
     <div class="col-md-6 mb-3">
       <h3>Login</h3>
       <a href="{{ url_for('student_login') }}" class="btn btn-primary mb-2">Student Login</a><br>
-      <a href="{{ url_for('tutor_login') }}" class="btn btn-secondary">Tutor Login</a>
+      <a href="{{ url_for('tutor.login') }}" class="btn btn-secondary">Tutor Login</a>
     </div>
   </section>
 
@@ -58,7 +58,7 @@
             {% if session.get('tutor_id') %}
             <a href="{{ url_for('payment', req_id=req.id) }}" class="btn btn-light mt-3">Contact Student</a>
             {% else %}
-            <a href="{{ url_for('tutor_login') }}" class="btn btn-light mt-3">Contact Student</a>
+            <a href="{{ url_for('tutor.login') }}" class="btn btn-light mt-3">Contact Student</a>
             {% endif %}
           </div>
         </div>

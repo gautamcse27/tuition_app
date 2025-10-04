@@ -4,9 +4,17 @@
 {% block content %}
 <div class="container my-4">
   <h2>Admin Dashboard</h2>
+
+  <!-- Logout button -->
+  <a href="{{ url_for('admin.logout') }}" class="btn btn-danger float-right mb-3">Logout</a>
+
   <h3>Students</h3>
   <table class="table table-bordered">
-    <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th></tr></thead>
+    <thead>
+      <tr>
+        <th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Status</th><th>Actions</th>
+      </tr>
+    </thead>
     <tbody>
       {% for student in students %}
       <tr>
@@ -14,16 +22,31 @@
         <td>{{ student.name }}</td>
         <td>{{ student.email }}</td>
         <td>{{ student.phone }}</td>
+        <td>
+          {% if student.active %}
+          <span class="badge badge-success">Active</span>
+          {% else %}
+          <span class="badge badge-secondary">Disabled</span>
+          {% endif %}
+        </td>
+        <td>
+          <a href="{{ url_for('admin.toggle_student', student_id=student.id) }}" class="btn btn-sm btn-warning">Toggle Enable</a>
+          <a href="{{ url_for('admin.remove_student', student_id=student.id) }}" class="btn btn-sm btn-danger">Remove</a>
+        </td>
       </tr>
       {% else %}
-      <tr><td colspan="4">No students found.</td></tr>
+      <tr><td colspan="6">No students found.</td></tr>
       {% endfor %}
     </tbody>
   </table>
 
   <h3>Tutors</h3>
   <table class="table table-bordered">
-    <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th></tr></thead>
+    <thead>
+      <tr>
+        <th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Status</th><th>Actions</th>
+      </tr>
+    </thead>
     <tbody>
       {% for tutor in tutors %}
       <tr>
@@ -31,16 +54,31 @@
         <td>{{ tutor.name }}</td>
         <td>{{ tutor.email }}</td>
         <td>{{ tutor.phone }}</td>
+        <td>
+          {% if tutor.active %}
+          <span class="badge badge-success">Active</span>
+          {% else %}
+          <span class="badge badge-secondary">Disabled</span>
+          {% endif %}
+        </td>
+        <td>
+          <a href="{{ url_for('admin.toggle_tutor', tutor_id=tutor.id) }}" class="btn btn-sm btn-warning">Toggle Enable</a>
+          <a href="{{ url_for('admin.remove_tutor', tutor_id=tutor.id) }}" class="btn btn-sm btn-danger">Remove</a>
+        </td>
       </tr>
       {% else %}
-      <tr><td colspan="4">No tutors found.</td></tr>
+      <tr><td colspan="6">No tutors found.</td></tr>
       {% endfor %}
     </tbody>
   </table>
 
   <h3>Tuition Requirements</h3>
   <table class="table table-bordered">
-    <thead><tr><th>ID</th><th>Student ID</th><th>Subject</th><th>Class</th><th>Mode</th><th>Address</th></tr></thead>
+    <thead>
+      <tr>
+        <th>ID</th><th>Student ID</th><th>Subject</th><th>Class</th><th>Mode</th><th>Address</th><th>Access</th><th>Student Details</th>
+      </tr>
+    </thead>
     <tbody>
       {% for req in requirements %}
       <tr>
@@ -50,9 +88,20 @@
         <td>{{ req.student_class }}</td>
         <td>{{ req.mode }}</td>
         <td>{{ req.address }}</td>
+        <td>
+          {% if req.approved %}
+          <span class="badge badge-success">Approved</span>
+          <a href="{{ url_for('admin.revoke_access', req_id=req.id) }}" class="btn btn-sm btn-warning">Revoke</a>
+          {% else %}
+          <a href="{{ url_for('admin.approve_access', req_id=req.id) }}" class="btn btn-sm btn-primary">Approve</a>
+          {% endif %}
+        </td>
+        <td>
+          <a href="{{ url_for('admin.view_student', student_id=req.student_id) }}" class="btn btn-sm btn-info">View Student</a>
+        </td>
       </tr>
       {% else %}
-      <tr><td colspan="6">No requirements found.</td></tr>
+      <tr><td colspan="8">No requirements found.</td></tr>
       {% endfor %}
     </tbody>
   </table>
