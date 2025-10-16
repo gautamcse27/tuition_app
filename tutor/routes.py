@@ -1,16 +1,22 @@
-from flask import render_template,session, redirect, url_for, flash, request, abort
+from flask import render_template, session, redirect, url_for, flash, request, abort
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from . import tutor_bp
-from models import Tutor, TutorProfile, TuitionRequirement, db
+from models import TutorStudentAccess, Tutor, TutorProfile, TuitionRequirement, db
 from forms import TutorLoginForm, TutorRegisterForm, TutorProfileForm
 import os
 
+
 ALLOWED_EXTENSIONS = {'pdf', 'jpg', 'jpeg', 'png'}
+
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def can_view_unmasked(tutor_id, student_id):
+    return TutorStudentAccess.query.filter_by(tutor_id=tutor_id, student_id=student_id).first() is not None
 
 
 @tutor_bp.route('/register', methods=['GET', 'POST'])
@@ -28,8 +34,6 @@ def register():
         flash('Tutor registered successfully! Please login.', 'success')
         return redirect(url_for('tutor.login'))
     return render_template('tutor_register.html', form=form)
-
-
 
 
 @tutor_bp.route('/login', methods=['GET', 'POST'])
@@ -52,6 +56,7 @@ def login():
             flash("Invalid email/phone or password.", "danger")
     return render_template('tutor_login.html', form=form)
 
+
 @tutor_bp.route('/logout')
 @login_required
 def logout():
@@ -64,6 +69,9 @@ def logout():
 @login_required
 def dashboard():
     tutor = current_user
+    if hasattr(tutor, 'role') and tutor.role != 'tutor':
+        flash('Access denied. Not a tutor account.', 'danger')
+        return redirect(url_for('tutor.login'))
     requirements = TuitionRequirement.query.filter_by(tutor_id=tutor.id).all()
     profile = TutorProfile.query.filter_by(tutor_id=tutor.id).first()
     form = TutorProfileForm(obj=profile)
@@ -88,6 +96,17 @@ def dashboard():
         return redirect(url_for('tutor.dashboard'))
 
     return render_template('tutor_dashboard.html', tutor=tutor, requirements=requirements, form=form)
+
+
+@tutor_bp.route('/all_requirements')
+@login_required
+def all_requirements():
+    page = request.args.get('page', 1, type=int)
+    per_page = 9
+    pagination = TuitionRequirement.query.order_by(TuitionRequirement.created_at.desc()).paginate(
+        page=page, per_page=per_page, error_out=False)
+    requirements = pagination.items
+    return render_template('all_requirements.html', requirements=requirements, pagination=pagination, can_view_unmasked=can_view_unmasked)
 
 
 @tutor_bp.route('/upload_receipt/<int:req_id>', methods=['GET', 'POST'])

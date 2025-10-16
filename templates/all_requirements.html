@@ -18,11 +18,27 @@
             <strong>Posted On: </strong> {{ req.created_at.strftime('%Y-%m-%d %H:%M') }}
           </p>
           <p class="card-text text-muted small" style="margin-top:auto;">
-            <strong>Email: </strong> {{ req.student.email[:2] ~ '***@***' }}<br>
-            <strong>Mobile: </strong> {{ req.student.phone[:2] ~ '******' }}<br>
+            <strong>Email: </strong> 
+            {% if session.get('tutor_id') and (req.tutor_id == session.get('tutor_id') or can_view_unmasked(session.get('tutor_id'), req.student.id)) %}
+              {{ req.student.email }}
+            {% else %}
+              {{ req.student.email[:2] ~ '***@***' }}
+            {% endif %}
+            <br>
+            <strong>Mobile: </strong> 
+            {% if session.get('tutor_id') and (req.tutor_id == session.get('tutor_id') or can_view_unmasked(session.get('tutor_id'), req.student.id)) %}
+              {{ req.student.phone }}
+            {% else %}
+              {{ req.student.phone[:2] ~ '******' }}
+            {% endif %}
+            <br>
             <strong>Address: </strong> 
             {% if req.mode == 'offline' %}
-              {{ req.address[:6] ~ '******' }}
+              {% if session.get('tutor_id') and (req.tutor_id == session.get('tutor_id') or can_view_unmasked(session.get('tutor_id'), req.student.id)) %}
+                {{ req.address }}
+              {% else %}
+                {{ req.address[:6] ~ '******' }}
+              {% endif %}
             {% else %}
               N/A
             {% endif %}
@@ -38,6 +54,7 @@
     {% endfor %}
   </div>
 
+  <!-- Pagination block remains same -->
   <nav aria-label="Page navigation">
     <ul class="pagination justify-content-center">
       {% if pagination.has_prev %}
@@ -47,7 +64,6 @@
       {% else %}
       <li class="page-item disabled"><span class="page-link">Previous</span></li>
       {% endif %}
-
       {% for p in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
         {% if p %}
           {% if p == pagination.page %}
@@ -59,7 +75,6 @@
         <li class="page-item disabled"><span class="page-link">…</span></li>
         {% endif %}
       {% endfor %}
-
       {% if pagination.has_next %}
       <li class="page-item">
         <a class="page-link" href="{{ url_for('all_requirements', page=pagination.next_num) }}">Next</a>

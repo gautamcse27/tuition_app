@@ -5,14 +5,19 @@
 <div class="container my-4">
   <h2>Admin Dashboard</h2>
 
-  <!-- Logout button -->
   <a href="{{ url_for('admin.logout') }}" class="btn btn-danger float-right mb-3">Logout</a>
 
+  <!-- Students Table -->
   <h3>Students</h3>
   <table class="table table-bordered">
     <thead>
       <tr>
-        <th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Status</th><th>Actions</th>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Status</th>
+        <th>Actions</th>
       </tr>
     </thead>
     <tbody>
@@ -40,11 +45,17 @@
     </tbody>
   </table>
 
+  <!-- Tutors Table -->
   <h3>Tutors</h3>
   <table class="table table-bordered">
     <thead>
       <tr>
-        <th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Status</th><th>Actions</th>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Status</th>
+        <th>Actions</th>
       </tr>
     </thead>
     <tbody>
@@ -72,11 +83,19 @@
     </tbody>
   </table>
 
+  <!-- Tuition Requirements Table -->
   <h3>Tuition Requirements</h3>
   <table class="table table-bordered">
     <thead>
       <tr>
-        <th>ID</th><th>Student ID</th><th>Subject</th><th>Class</th><th>Mode</th><th>Address</th><th>Access</th><th>Student Details</th>
+        <th>ID</th>
+        <th>Student ID</th>
+        <th>Subject</th>
+        <th>Class</th>
+        <th>Mode</th>
+        <th>Address</th>
+        <th>Access</th>
+        <th>Student Details</th>
       </tr>
     </thead>
     <tbody>
@@ -102,6 +121,84 @@
       </tr>
       {% else %}
       <tr><td colspan="8">No requirements found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- Tutor-Student Access Management Section -->
+  <h3>Tutor-Student Access Management</h3>
+  <form method="post" action="{{ url_for('admin.manage_access') }}">
+    <div class="form-row align-items-center mb-3">
+      <div class="col-auto">
+        <select name="tutor_id" class="form-control" required>
+          <option value="" selected disabled>Select Tutor</option>
+          {% for tutor in tutors %}
+          <option value="{{ tutor.id }}">{{ tutor.name }} (ID:{{ tutor.id }})</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-auto">
+        <select name="student_id" class="form-control" required>
+          <option value="" selected disabled>Select Student</option>
+          {% for student in students %}
+          <option value="{{ student.id }}">{{ student.name }} (ID:{{ student.id }})</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-auto">
+        <select name="action" class="form-control" required>
+          <option value="" selected disabled>Select Action</option>
+          <option value="grant">Grant Access</option>
+          <option value="revoke">Revoke Access</option>
+        </select>
+      </div>
+      <div class="col-auto">
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </div>
+  </form>
+
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Tutor</th>
+        <th>Student</th>
+        <th>Has Access</th>
+        <th>Modify</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for tutor in tutors %}
+        {% for student in students %}
+          <tr>
+            <td>{{ tutor.name }} (ID:{{ tutor.id }})</td>
+            <td>{{ student.name }} (ID:{{ student.id }})</td>
+            <td>
+              {% if (tutor.id, student.id) in access_map %}
+                <span class="badge badge-success">Yes</span>
+              {% else %}
+                <span class="badge badge-secondary">No</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if (tutor.id, student.id) in access_map %}
+                <form method="post" action="{{ url_for('admin.manage_access') }}" style="display:inline;">
+                  <input type="hidden" name="tutor_id" value="{{ tutor.id }}">
+                  <input type="hidden" name="student_id" value="{{ student.id }}">
+                  <input type="hidden" name="action" value="revoke">
+                  <button type="submit" class="btn btn-sm btn-danger">Revoke</button>
+                </form>
+              {% else %}
+                <form method="post" action="{{ url_for('admin.manage_access') }}" style="display:inline;">
+                  <input type="hidden" name="tutor_id" value="{{ tutor.id }}">
+                  <input type="hidden" name="student_id" value="{{ student.id }}">
+                  <input type="hidden" name="action" value="grant">
+                  <button type="submit" class="btn btn-sm btn-success">Grant</button>
+                </form>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
       {% endfor %}
     </tbody>
   </table>

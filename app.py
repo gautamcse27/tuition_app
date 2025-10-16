@@ -2,7 +2,7 @@ import os
 from flask import Flask, render_template, redirect, url_for, request, flash, session, abort, Response
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 
-from models import db, Student, Tutor, TuitionRequirement, TutorProfile, Admin
+from models import db,TutorStudentAccess, Student, Tutor, TuitionRequirement, TutorProfile, Admin
 from forms import (
     StudentRegisterForm,
     TutorRegisterForm,
@@ -29,7 +29,7 @@ login_manager.login_view = 'tutor.login'
 @login_manager.user_loader
 def load_user(user_id):
     # Attempt to load Tutor user
-    tutor = Tutor.query.get(int(user_id))
+    tutor = db.session.get(Tutor, int(user_id))
     if tutor:
         return tutor
     # Optionally, fallback to Admin load (if needed)
@@ -141,6 +141,8 @@ def student_logout():
     return redirect(url_for('student_login'))
 
 
+def can_view_unmasked(tutor_id, student_id):
+    return TutorStudentAccess.query.filter_by(tutor_id=tutor_id, student_id=student_id).first() is not None
 
 
 @app.route('/requirements')
@@ -150,7 +152,7 @@ def all_requirements():
     pagination = TuitionRequirement.query.order_by(TuitionRequirement.created_at.desc()).paginate(
         page=page, per_page=per_page, error_out=False)
     requirements = pagination.items
-    return render_template('all_requirements.html', requirements=requirements, pagination=pagination)
+    return render_template('all_requirements.html', requirements=requirements, pagination=pagination,can_view_unmasked=can_view_unmasked)
 
 
 @app.route('/student/requirement/close/<int:req_id>', methods=['POST'])

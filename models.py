@@ -4,15 +4,16 @@ from sqlalchemy import LargeBinary
 from flask_login import UserMixin
 from datetime import datetime
 from flask_login import UserMixin
-
+from flask_login import UserMixin
 db = SQLAlchemy()
 
 class Admin(db.Model, UserMixin):
+    __tablename__ = 'admin'
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(50), unique=True, nullable=False)
+    username = db.Column(db.String(64), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(256), nullable=False)
-
+    password_hash = db.Column(db.String(128), nullable=False)
+    is_admin = db.Column(db.Boolean, default=True)  # Add this field
 
 class Student(db.Model):
     __tablename__ = 'student_registration'
@@ -105,3 +106,12 @@ class AccessRequest(db.Model):
 
     tutor = db.relationship('Tutor', backref=db.backref('access_requests', lazy=True))
     requirement = db.relationship('TuitionRequirement', backref=db.backref('access_requests', lazy=True))
+
+class TutorStudentAccess(db.Model):
+    __tablename__ = 'tutor_student_access'
+    id = db.Column(db.Integer, primary_key=True)
+    tutor_id = db.Column(db.Integer, db.ForeignKey('tutor_registration.id'), nullable=False)
+    student_id = db.Column(db.Integer, db.ForeignKey('student_registration.id'), nullable=False)
+
+    tutor = db.relationship('Tutor', backref='student_accesses')
+    student = db.relationship('Student', backref='tutor_accesses')

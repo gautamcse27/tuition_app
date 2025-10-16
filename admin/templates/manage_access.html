@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Manage Tutor-Student Access{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <h2>Manage Tutor-Student Access</h2>
+
+  <!-- Access Grant/Revoke Form -->
+  <form method="post" action="{{ url_for('admin.manage_access') }}">
+    <div class="form-row align-items-center mb-3">
+      <div class="col-auto">
+        <label class="sr-only" for="tutorSelect">Tutor</label>
+        <select name="tutor_id" id="tutorSelect" class="form-control" required>
+          <option value="" disabled selected>Select Tutor</option>
+          {% for tutor in tutors %}
+          <option value="{{ tutor.id }}">{{ tutor.name }} (ID:{{ tutor.id }})</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-auto">
+        <label class="sr-only" for="studentSelect">Student</label>
+        <select name="student_id" id="studentSelect" class="form-control" required>
+          <option value="" disabled selected>Select Student</option>
+          {% for student in students %}
+          <option value="{{ student.id }}">{{ student.name }} (ID:{{ student.id }})</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-auto">
+        <label class="sr-only" for="actionSelect">Action</label>
+        <select name="action" id="actionSelect" class="form-control" required>
+          <option value="" disabled selected>Select Action</option>
+          <option value="grant">Grant Access</option>
+          <option value="revoke">Revoke Access</option>
+        </select>
+      </div>
+      <div class="col-auto">
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Current Access Grants Table -->
+  <h3>Current Access Grants</h3>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Tutor</th>
+        <th>Student</th>
+        <th>Has Access</th>
+        <th>Modify</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for tutor in tutors %}
+        {% for student in students %}
+          <tr>
+            <td>{{ tutor.name }} (ID:{{ tutor.id }})</td>
+            <td>{{ student.name }} (ID:{{ student.id }})</td>
+            <td>
+              {% if (tutor.id, student.id) in access_map %}
+                <span class="badge badge-success">Yes</span>
+              {% else %}
+                <span class="badge badge-secondary">No</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if (tutor.id, student.id) in access_map %}
+                <!-- Revoke Button -->
+                <form method="post" action="{{ url_for('admin.manage_access') }}" style="display:inline;">
+                  <input type="hidden" name="tutor_id" value="{{ tutor.id }}">
+                  <input type="hidden" name="student_id" value="{{ student.id }}">
+                  <input type="hidden" name="action" value="revoke">
+                  <button type="submit" class="btn btn-sm btn-danger">Revoke</button>
+                </form>
+              {% else %}
+                <!-- Grant Button -->
+                <form method="post" action="{{ url_for('admin.manage_access') }}" style="display:inline;">
+                  <input type="hidden" name="tutor_id" value="{{ tutor.id }}">
+                  <input type="hidden" name="student_id" value="{{ student.id }}">
+                  <input type="hidden" name="action" value="grant">
+                  <button type="submit" class="btn btn-sm btn-success">Grant</button>
+                </form>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary mt-3">Back to Dashboard</a>
+</div>
+{% endblock %}
