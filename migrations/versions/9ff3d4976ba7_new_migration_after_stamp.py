@@ -39,7 +39,7 @@ def upgrade():
                existing_type=sa.VARCHAR(length=255),
                type_=sa.String(length=256),
                existing_nullable=False)
-        # If 'created_at' does NOT exist in production, leave this commented:
+        # Do NOT drop 'created_at', as it exists in your DB
         # batch_op.drop_column('created_at')
 
     with op.batch_alter_table('tuition_requirement', schema=None) as batch_op:
@@ -49,7 +49,7 @@ def upgrade():
                existing_nullable=True)
         batch_op.drop_constraint(batch_op.f('tuition_requirement_student_id_fkey'), type_='foreignkey')
         batch_op.create_foreign_key(None, 'student_registration', ['student_id'], ['id'])
-        # If 'pdf_filename' does NOT exist in production, leave this commented:
+        # If 'pdf_filename' does NOT exist, leave commented:
         # batch_op.drop_column('pdf_filename')
 
     with op.batch_alter_table('tutor_profile', schema=None) as batch_op:
@@ -69,7 +69,7 @@ def upgrade():
                existing_type=sa.VARCHAR(length=255),
                type_=sa.String(length=256),
                existing_nullable=False)
-        # If 'created_at' does NOT exist in production, leave this commented:
+        # If 'created_at' does NOT exist in prod, leave commented:
         # batch_op.drop_column('created_at')
 
 def downgrade():
@@ -97,7 +97,9 @@ def downgrade():
     with op.batch_alter_table('tuition_requirement', schema=None) as batch_op:
         batch_op.add_column(sa.Column('pdf_filename', sa.VARCHAR(length=255), autoincrement=False, nullable=True))
         batch_op.drop_constraint(None, type_='foreignkey')
-        batch_op.create_foreign_key(batch_op.f('tuition_requirement_student_id_fkey'), 'student_registration', ['student_id'], ['id'], ondelete='CASCADE')
+        batch_op.create_foreign_key(
+            batch_op.f('tuition_requirement_student_id_fkey'),
+            'student_registration', ['student_id'], ['id'], ondelete='CASCADE')
         batch_op.alter_column('description',
                existing_type=sa.String(length=300),
                type_=sa.VARCHAR(length=400),
