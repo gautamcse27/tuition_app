@@ -66,7 +66,7 @@ def upgrade():
                existing_type=sa.VARCHAR(length=255),
                type_=sa.String(length=256),
                existing_nullable=False)
-        batch_op.drop_column('created_at')
+        #batch_op.drop_column('created_at')
 
     # ### end Alembic commands ###
 
