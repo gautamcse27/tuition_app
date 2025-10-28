@@ -1,76 +1,129 @@
 {% extends "base.html" %}
-{% block title %}Tuition Portal - Home{% endblock %}
+{% block title %}Connect with Expert Tutors{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-  <h1 class="text-center mb-4">Welcome to Tuition Portal</h1>
+<style>
+.hero-bg-layer {
+    background: linear-gradient(90deg, #2563eb 0%, #38b6ff 100%);
+    min-height: 390px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+.hero-card {
+    background: #fff;
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(66,82,112,0.12), 0 1.5px 7px rgba(0,0,0,0.03);
+    padding: 60px 36px 45px 36px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+    max-width: 830px;
+    width: 100%;
+}
+@media (max-width:600px) {
+    .hero-card { padding: 35px 10px 25px 10px; }
+}
+.hero-title {
+    font-size: 3.2rem;
+    font-weight: bold;
+    color: #191e36;
+    margin-bottom: 15px;
+}
+.hero-subtitle {
+    font-size: 1.3rem;
+    color: #465179;
+    margin-bottom: 30px;
+}
+.hero-btns .btn {
+    min-width: 180px;
+    font-size: 1.15rem;
+    margin: 0 10px 0 0;
+    border-radius: 10px;
+    padding: 14px 0;
+}
+</style>
 
-  <p class="lead text-center">
-    Your one-stop platform to find or offer tuition/classes easily.
-  </p>
-
-  <section class="mb-5">
-    <h2>About Tuition Portal</h2>
-    <p>
-      Tuition Portal connects students and tutors seamlessly. Students can post tuition requirements, search for tutors, register easily, and manage their requests.
-      Tutors can register, showcase their skills, and find matching tuition opportunities.
-    </p>
-  </section>
-
-  <section class="row text-center">
-    <div class="col-md-6 mb-3">
-      <h3>Register</h3>
-      <a href="{{ url_for('student_register') }}" class="btn btn-primary mb-2">Student Registration</a><br>
-      <a href="{{ url_for('tutor.register') }}" class="btn btn-secondary">Tutor Registration</a>
+<div class="hero-bg-layer">
+  <div class="hero-card text-center mx-auto">
+    <div class="hero-title">Connect with Expert Tutors</div>
+    <div class="hero-subtitle">
+      Find the perfect tutor for your learning journey or share your expertise as a tutor
     </div>
-    <div class="col-md-6 mb-3">
-      <h3>Login</h3>
-      <a href="{{ url_for('student_login') }}" class="btn btn-primary mb-2">Student Login</a><br>
-      <a href="{{ url_for('tutor.login') }}" class="btn btn-secondary">Tutor Login</a>
+    <div class="hero-btns mt-4">
+      <a href="{{ url_for('student_register') }}" class="btn btn-primary btn-lg">Get Started</a>
+      <a href="{{ url_for('all_requirements') }}" class="btn btn-outline-primary btn-lg">Browse Tutors</a>
     </div>
-  </section>
-
-  <section class="mt-5">
-    <h2 class="mb-4">Posted Tuition Requirements</h2>
-    {% if tuition_requirements %}
-    <div class="row">
-      {% for req in tuition_requirements[:9] %}
-      <div class="col-md-4 mb-4">
-        <div class="card shadow-sm border-primary h-100" style="background: linear-gradient(135deg, #3aafc6 0%, #2a7f92 100%);">
-          <div class="card-body d-flex flex-column">
-            <h5 class="card-title text-white">{{ req.student.name }}</h5>
-            <p class="card-text text-white">
-              <strong>Subject:</strong> {{ req.subject }}<br>
-              <strong>Class:</strong> {{ req.student_class }}<br>
-              <strong>Mode:</strong> {{ req.mode|capitalize }}<br>
-              <strong>Posted On:</strong> {{ req.created_at.strftime('%Y-%m-%d %H:%M') }}
-            </p>
-            <p class="card-text text-white small mt-auto">
-              <strong>Email:</strong> {{ req.student.email[:2] ~ '***@***' }}<br>
-              <strong>Mobile:</strong> {{ req.student.phone[:2] ~ '******' }}<br>
-              <strong>Address:</strong>
-              {% if req.mode == 'offline' %}
-                {{ req.address[:6] ~ '******' }}
-              {% else %}
-                N/A
-              {% endif %}
-            </p>
-            {% if session.get('tutor_id') %}
-            <a href="{{ url_for('payment', req_id=req.id) }}" class="btn btn-light mt-3">Contact Student</a>
-            {% else %}
-            <a href="{{ url_for('tutor.login') }}" class="btn btn-light mt-3">Contact Student</a>
-            {% endif %}
-          </div>
-        </div>
-      </div>
-      {% endfor %}
-    </div>
-    <div class="text-center mt-4">
-      <a href="{{ url_for('all_requirements') }}" class="btn btn-outline-primary">Show All Requirements</a>
-    </div>
-    {% else %}
-      <div class="alert alert-info">No tuition requirements posted yet.</div>
-    {% endif %}
-  </section>
+  </div>
 </div>
+
+<section class="container-fluid my-5">
+  <h2 class="fw-bold text-center mb-1" style="font-size:2.5rem;">Why Choose TutorConnect?</h2>
+  <p class="text-center fs-5 mb-5 text-secondary" style="font-weight:400;">We make learning and teaching easier for everyone</p>
+  <div class="row g-4">
+      <div class="col-md-4">
+          <div class="border rounded-4 p-4 bg-white h-100 shadow-sm text-center">
+              <div class="mb-2">
+                  <i class="bi bi-book fs-1 text-primary"></i>
+              </div>
+              <h5 class="fw-bold mb-1">Expert Tutors</h5>
+              <div class="text-secondary">Connect with qualified tutors across various subjects and grade levels</div>
+          </div>
+      </div>
+      <div class="col-md-4">
+          <div class="border rounded-4 p-4 bg-white h-100 shadow-sm text-center">
+              <div class="mb-2">
+                  <i class="bi bi-person-lines-fill fs-1 text-primary"></i>
+              </div>
+              <h5 class="fw-bold mb-1">Easy Matching</h5>
+              <div class="text-secondary">Find the perfect tutor based on subject, location, and budget preferences</div>
+          </div>
+      </div>
+      <div class="col-md-4">
+          <div class="border rounded-4 p-4 bg-white h-100 shadow-sm text-center">
+              <div class="mb-2">
+                  <i class="bi bi-star fs-1 text-primary"></i>
+              </div>
+              <h5 class="fw-bold mb-1">Quality Assurance</h5>
+              <div class="text-secondary">All tutors are verified and rated by students for quality assurance</div>
+          </div>
+      </div>
+      <div class="col-md-4">
+          <div class="border rounded-4 p-4 bg-white h-100 shadow-sm text-center">
+              <div class="mb-2">
+                  <i class="bi bi-clock-history fs-1 text-primary"></i>
+              </div>
+              <h5 class="fw-bold mb-1">Flexible Scheduling</h5>
+              <div class="text-secondary">Schedule sessions at your convenience with flexible timing options</div>
+          </div>
+      </div>
+      <div class="col-md-4">
+          <div class="border rounded-4 p-4 bg-white h-100 shadow-sm text-center">
+              <div class="mb-2">
+                  <i class="bi bi-mortarboard fs-1 text-primary"></i>
+              </div>
+              <h5 class="fw-bold mb-1">All Subjects</h5>
+              <div class="text-secondary">From elementary math to advanced physics, find tutors for any subject</div>
+          </div>
+      </div>
+      <div class="col-md-4">
+          <div class="border rounded-4 p-4 bg-white h-100 shadow-sm text-center">
+              <div class="mb-2">
+                  <i class="bi bi-shield-check fs-1 text-primary"></i>
+              </div>
+              <h5 class="fw-bold mb-1">Secure Platform</h5>
+              <div class="text-secondary">Safe and secure platform for all your tutoring needs and communications</div>
+          </div>
+      </div>
+  </div>
+</section>
+
+<section class="text-center py-4" style="background: #fff;">
+  <div class="container">
+    <h3 class="fw-bold mb-3">Ready to Start Learning?</h3>
+    <p class="text-muted mb-4">Join thousands of students and tutors already using TutorConnect</p>
+    <a href="{{ url_for('student_register') }}" class="btn btn-primary btn-lg">Sign Up Today</a>
+  </div>
+</section>
 {% endblock %}
