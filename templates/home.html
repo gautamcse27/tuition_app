@@ -43,6 +43,33 @@
     border-radius: 10px;
     padding: 14px 0;
 }
+
+/* Card Design and Hover */
+.feature-card {
+    transition: box-shadow 0.25s, transform 0.22s, border 0.22s, background 0.22s;
+    cursor: pointer;
+    box-shadow: 0 1px 6px rgba(60,77,102,0.06);
+    border: 2px solid #f1f5fa;
+    margin-bottom: 16px;
+    margin-top: 16px;
+    border-radius: 16px;
+    background: #fff;
+    position: relative;
+    z-index: 1;
+}
+.feature-card:hover, .feature-card:active, .feature-card:focus {
+    box-shadow: 0 8px 32px rgba(66,82,112,0.16), 0 1.5px 7px rgba(0,0,0,0.06);
+    background: linear-gradient(102deg, #e8f0ff 75%, #f6f9fd 100%);
+    border-color: #2563eb;
+    transform: translateY(-6px) scale(1.03);
+    z-index: 2;
+}
+.feature-card .icon {
+    font-size: 2.8rem;
+    color: #2563eb;
+    margin-bottom: 0.8rem;
+    margin-top: 0.2rem;
+}
 </style>
 
 <div class="hero-bg-layer">
@@ -61,56 +88,56 @@
 <section class="w-100 my-5 px-5" style="max-width: 100vw;">
   <h2 class="fw-bold text-center mb-1" style="font-size:2.5rem;">Why Choose TutorConnect?</h2>
   <p class="text-center fs-5 mb-5 text-secondary" style="font-weight:400;">We make learning and teaching easier for everyone</p>
-  <div class="row g-4">
-      <div class="col-md-4">
-          <div class="border rounded-4 p-4 bg-white h-100 shadow-sm text-center">
-              <div class="mb-2">
-                  <i class="bi bi-book fs-1 text-primary"></i>
+  <div class="row g-4 justify-content-center">
+      <div class="col-lg-4 col-md-6">
+          <div class="feature-card p-4 h-100 text-center shadow-sm">
+              <div class="icon mb-2">
+                  <i class="bi bi-book"></i>
               </div>
               <h5 class="fw-bold mb-1">Expert Tutors</h5>
               <div class="text-secondary">Connect with qualified tutors across various subjects and grade levels</div>
           </div>
       </div>
-      <div class="col-md-4">
-          <div class="border rounded-4 p-4 bg-white h-100 shadow-sm text-center">
-              <div class="mb-2">
-                  <i class="bi bi-person-lines-fill fs-1 text-primary"></i>
+      <div class="col-lg-4 col-md-6">
+          <div class="feature-card p-4 h-100 text-center shadow-sm">
+              <div class="icon mb-2">
+                  <i class="bi bi-person-lines-fill"></i>
               </div>
               <h5 class="fw-bold mb-1">Easy Matching</h5>
               <div class="text-secondary">Find the perfect tutor based on subject, location, and budget preferences</div>
           </div>
       </div>
-      <div class="col-md-4">
-          <div class="border rounded-4 p-4 bg-white h-100 shadow-sm text-center">
-              <div class="mb-2">
-                  <i class="bi bi-star fs-1 text-primary"></i>
+      <div class="col-lg-4 col-md-6">
+          <div class="feature-card p-4 h-100 text-center shadow-sm">
+              <div class="icon mb-2">
+                  <i class="bi bi-star"></i>
               </div>
               <h5 class="fw-bold mb-1">Quality Assurance</h5>
               <div class="text-secondary">All tutors are verified and rated by students for quality assurance</div>
           </div>
       </div>
-      <div class="col-md-4">
-          <div class="border rounded-4 p-4 bg-white h-100 shadow-sm text-center">
-              <div class="mb-2">
-                  <i class="bi bi-clock-history fs-1 text-primary"></i>
+      <div class="col-lg-4 col-md-6">
+          <div class="feature-card p-4 h-100 text-center shadow-sm">
+              <div class="icon mb-2">
+                  <i class="bi bi-clock-history"></i>
               </div>
               <h5 class="fw-bold mb-1">Flexible Scheduling</h5>
               <div class="text-secondary">Schedule sessions at your convenience with flexible timing options</div>
           </div>
       </div>
-      <div class="col-md-4">
-          <div class="border rounded-4 p-4 bg-white h-100 shadow-sm text-center">
-              <div class="mb-2">
-                  <i class="bi bi-mortarboard fs-1 text-primary"></i>
+      <div class="col-lg-4 col-md-6">
+          <div class="feature-card p-4 h-100 text-center shadow-sm">
+              <div class="icon mb-2">
+                  <i class="bi bi-mortarboard"></i>
               </div>
               <h5 class="fw-bold mb-1">All Subjects</h5>
               <div class="text-secondary">From elementary math to advanced physics, find tutors for any subject</div>
           </div>
       </div>
-      <div class="col-md-4">
-          <div class="border rounded-4 p-4 bg-white h-100 shadow-sm text-center">
-              <div class="mb-2">
-                  <i class="bi bi-shield-check fs-1 text-primary"></i>
+      <div class="col-lg-4 col-md-6">
+          <div class="feature-card p-4 h-100 text-center shadow-sm">
+              <div class="icon mb-2">
+                  <i class="bi bi-shield-check"></i>
               </div>
               <h5 class="fw-bold mb-1">Secure Platform</h5>
               <div class="text-secondary">Safe and secure platform for all your tutoring needs and communications</div>
